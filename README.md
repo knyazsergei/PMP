@@ -16,5 +16,7 @@
 | | |
 | Чтобы (результат). | Чтобы спокойно играть не ругаясь на фризы, хвастаться своим компом и набивать фраги. |
 
+[Сценарий](https://github.com/knyazsergei/PMP/blob/master/script.jpg)
+[Roadmap](https://drive.google.com/open?id=1eekLwXI13mIRnuq8dJv_ebb4Ys_TqrS4)
 [Макеты](https://github.com/knyazsergei/PMP/tree/master/layouts)
 [Интерактивный прототип](https://projects.invisionapp.com/share/4YE6PV8G8#/screens/260872697_Page_1)
