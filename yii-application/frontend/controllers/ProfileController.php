@@ -1,8 +1,8 @@
 <?php
 
-namespace app\modules\user\controllers;
+namespace frontend\controllers;
  
-use app\modules\user\models\User;
+use common\models\User;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use Yii;

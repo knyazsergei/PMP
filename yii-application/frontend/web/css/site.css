@@ -117,3 +117,9 @@ a.desc:after {
     text-decoration: none;
     background-color: #f5f5f5;
 }
+
+.centered-and-cropped { 
+    object-fit: cover;
+    width:200px;
+    height:200px;
+}

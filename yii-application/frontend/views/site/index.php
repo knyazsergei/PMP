@@ -15,7 +15,7 @@ $this->title = 'My Yii Application';
     </div>
 
     <div class="album text-muted">
-        <div class="container">
+        <div class="container-fluid">
 
             <div class="row">
                 <?= ListView::widget([
