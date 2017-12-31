@@ -50,7 +50,7 @@ AppAsset::register($this);
             <li class="dropdown">
                 <a class="dropdown-toggle" href="#" data-toggle="dropdown">' . Yii::$app->user->identity->username . '<span class="caret"></span></a>
                     <ul class="dropdown-menu">
-                        <li><a href="#" tabindex="-1">Profile</a></li>
+                        <li><a href="/index.php?r=profile%2Findex" tabindex="-1">Profile</a></li>
                         <li>'
                         . Html::beginForm(['/site/logout'], 'post')
                         . Html::submitButton(
@@ -75,16 +75,13 @@ AppAsset::register($this);
 
         <div class="col-6 col-md-3 sidebar-offcanvas">
           <div class="list-group">
-            <a href="#" class="list-group-item active">Link</a>
-            <a href="#" class="list-group-item">Link</a>
-            <a href="#" class="list-group-item">Link</a>
-            <a href="#" class="list-group-item">Link</a>
-            <a href="#" class="list-group-item">Link</a>
-            <a href="#" class="list-group-item">Link</a>
-            <a href="#" class="list-group-item">Link</a>
-            <a href="#" class="list-group-item">Link</a>
-            <a href="#" class="list-group-item">Link</a>
-            <a href="#" class="list-group-item">Link</a>
+              <?php
+                $catList = Yii::$app->getModule('categories')->getAll();
+                foreach ($catList as $cat) {
+                    echo " <a href=\"#\" class=\"list-group-item\">" . $cat["name"] . "</a>";
+                }
+                //can be class = "active"
+              ?>
           </div>
         </div><!--/span-->
 

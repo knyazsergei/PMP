@@ -13,7 +13,11 @@ return [
          'comments' => [
             'class' => 'rmrevin\yii\module\Comments\Module',
             'userIdentityClass' => 'app\models\User',
-            'useRbac' => true
-        ]
+            'useRbac' => true,
+        ],
+         'redactor' => 'yii\redactor\RedactorModule',
+         'categories' => [
+             'class' => 'yiimodules\categories\Module',
+         ],
     ]
 ];

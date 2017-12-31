@@ -21,7 +21,9 @@
         "twbs/bootstrap": "4.0.0-alpha.6",
         "kartik-v/yii2-widget-rating": "*",
         "rmrevin/yii2-comments": "~1.4",
-        "kartik-v/yii2-widget-datetimepicker": "*"
+        "kartik-v/yii2-widget-datetimepicker": "*",
+        "yiimodules/yii2-categories": "1.0.*"
+
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.0.0",
