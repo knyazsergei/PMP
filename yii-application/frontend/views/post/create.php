@@ -2,9 +2,8 @@
 
 use yii\helpers\Html;
 
-
 /* @var $this yii\web\View */
-/* @var $model app\models\Post */
+/* @var $model backend\models\Post */
 
 $this->title = Yii::t('app', 'Create Post');
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Posts'), 'url' => ['index']];
@@ -16,6 +15,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?= $this->render('_form', [
         'model' => $model,
+        'uploadImageModel' => $uploadImageModel
     ]) ?>
 
 </div>

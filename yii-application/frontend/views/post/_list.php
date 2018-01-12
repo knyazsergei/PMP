@@ -1,32 +1,16 @@
 <?php
 use yii\helpers\Html;
 use yii\helpers\HtmlPurifier;
-use kartik\rating\StarRating;
 ?>
 
 <div class="col-lg-4 col-sm-6 portfolio-item">
   <div class="card h-100">
-    <a href="#"><img class="card-img-top" width="100%" src="<?= Yii::getAlias('@backendUploads/uploads/');?><?= HtmlPurifier::process($model->image) ?>" alt=""></a>
+    <a href="#"><img class="card-img-top centered-and-cropped" width="100%" src="<?= (empty($model->image) ? "/images/nophoto.png" : Yii::getAlias('/uploads/' . HtmlPurifier::process($model->image))) ?>" alt=""></a>
     <div class="card-body">
-      <h4 class="card-title">
-        <a href="/index.php?r=post%2Fview&id=<?= HtmlPurifier::process($model->id) ?>"><?= Html::encode($model->title) ?></a>
-      </h4>
-      <p class="card-text"><?= Html::encode($model->description) ?>
-      <?php
-			echo StarRating::widget([
-		    'name' => 'rating_20',
-		    'pluginOptions' => [
-		        'size' => 'md',
-		        'stars' => 5,
-		        'step' => 1,
-		        'showClear' => false,
-		        'showCaption' => false,
-		        'animate' => false,
-				'disabled' => Yii::$app->user->isGuest ? true : false,//для гостя блокируем кнопки
+      <h4 class="card-title"><?= Html::encode($model->title) ?></h4>
+        <p class="card-text"><?= \yii\helpers\StringHelper::truncate(Html::encode($model->description),120,'...');?></p>
+        <p><a class="btn btn-default more" href="/post/view?id=<?= HtmlPurifier::process($model->id) ?>&catId=<?= HtmlPurifier::process($model->category) ?>">Show &raquo;</a></p>
 
-		    ]
-		]);
-		?>
     </div>
   </div>
 </div>

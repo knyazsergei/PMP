@@ -27,7 +27,8 @@ class User extends ActiveRecord implements IdentityInterface, CommentatorInterfa
     const STATUS_DELETED = 0;
     const STATUS_ACTIVE = 10;
 
-
+    public $newPassword;
+    public $newPasswordRepeat;
     /**
      * @inheritdoc
      */
@@ -54,6 +55,16 @@ class User extends ActiveRecord implements IdentityInterface, CommentatorInterfa
         return [
             ['status', 'default', 'value' => self::STATUS_ACTIVE],
             ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_DELETED]],
+            ['email', 'trim'],
+            ['email', 'required'],
+            ['email', 'email'],
+            ['email', 'string', 'max' => 255],
+            ['email', 'unique', 'targetClass' => '\common\models\User', 'message' => 'This email address has already been taken.'],
+
+            ['newPassword', 'required'],
+            ['newPassword', 'string', 'min' => 6],
+            ['newPasswordRepeat', 'required'],
+            ['newPasswordRepeat', 'string', 'min' => 6],
         ];
     }
 
@@ -191,7 +202,7 @@ class User extends ActiveRecord implements IdentityInterface, CommentatorInterfa
     //for comments 
     public function getCommentatorAvatar()
     {
-        return "https://pp.userapi.com/c639331/v639331507/dd04/OM6uAsHrsew.jpg";getGravatar($this->email);//$this->avatar_url;
+        return $this->getAvatar();
     }
 
     public function getCommentatorName()
@@ -201,18 +212,19 @@ class User extends ActiveRecord implements IdentityInterface, CommentatorInterfa
 
     public function getCommentatorUrl()
     {
-        return ['/profile', 'id' => $this->id]; // or false, if user does not have a public page
+        return false;//['/profile', 'id' => $this->id]; // or false, if user does not have a public page
     }
 
     public function afterSave($insert, $changedAttributes){
         parent::afterSave($insert, $changedAttributes);
-     
-        $auth = Yii::$app->authManager;
-        $viewer = $auth->getRole('viewer'); // Получаем роль editor
-        $auth->assign($viewer, $this->id); 
+        
+        //$auth = Yii::$app->authManager;
+        //$viewer = $auth->getRole('viewer'); // Получаем роль viewer
+        //$auth->assign($viewer, $this->id); 
+        
     }
 
-    public function getGravatar( $email, $s = 80, $d = 'mm', $r = 'g', $img = false, $atts = array() ) {
+    protected function getGravatar( $email, $s = 200, $d = 'mm', $r = 'g', $img = false, $atts = array() ) {
         $url = 'https://www.gravatar.com/avatar/';
         $url .= md5( strtolower( trim( $email ) ) );
         $url .= "?s=$s&d=$d&r=$r";
@@ -223,5 +235,11 @@ class User extends ActiveRecord implements IdentityInterface, CommentatorInterfa
             $url .= ' />';
         }
         return $url;
+    }
+
+    //for profile
+    public function getAvatar()
+    {
+        return $this->getGravatar($this->email);//$this->avatar_url;
     }
 }

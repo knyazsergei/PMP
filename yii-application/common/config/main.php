@@ -7,7 +7,20 @@ return [
         ],
         'authManager' => [
             'class' => 'yii\rbac\DbManager',
-        ]
+        ],
+        'urlManager' => [
+            'enablePrettyUrl' => true,
+            'showScriptName' => false,
+            'rules' => [
+                '<controller>/<action>' => '<controller>/<action>',
+            ]
+        ],
+        'search' => [
+            'class' => 'himiklab\yii2\search\Search',
+            'models' => [
+                'app\modules\page\models\Page',
+            ],
+        ],
     ],
      'modules' => [
          'comments' => [

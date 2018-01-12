@@ -9,6 +9,7 @@ use Yii;
  
 class ProfileController extends Controller
 {
+
     public function behaviors()
     {
         return [
@@ -26,8 +27,17 @@ class ProfileController extends Controller
  
     public function actionIndex()
     {
+        $model = $this->findModel();
+
+        if($model->load(Yii::$app->request->post())) {
+            if($model["newPassword"] == $model["newPasswordRepeat"]) {
+                $model->setPassword($model["newPassword"]);
+                $model->update();
+            }
+        }
+
         return $this->render('index', [
-            'model' => $this->findModel(),
+            'model' => $this->findModel()
         ]);
     }
  

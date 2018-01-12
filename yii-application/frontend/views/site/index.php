@@ -2,7 +2,7 @@
 use yii\widgets\ListView;
 /* @var $this yii\web\View */
 
-$this->title = 'My Yii Application';
+$this->title = 'Valeo space';
 ?>
 <div class="site-index">
 
@@ -11,7 +11,7 @@ $this->title = 'My Yii Application';
 
         <p class="lead">Choose the best assembly!</p>
 
-        <p><a class="btn btn-lg btn-success" href="/index.php?r=post%2Findex">Let's start</a></p>
+        <p><a class="btn btn-lg btn-success" href="/post/">Let's start</a></p>
     </div>
 
     <div class="album text-muted">

@@ -4,10 +4,16 @@ namespace frontend\controllers;
 
 use Yii;
 use backend\models\Post;
+use backend\models\UploadImage;
 use backend\models\PostSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\UploadedFile;
+use yii\data\Pagination;
+use yii\data\ArrayDataProvider;
+use frontend\controllers\AssemblyController;
+
 
 /**
  * PostController implements the CRUD actions for Post model.
@@ -38,10 +44,105 @@ class PostController extends Controller
         $searchModel = new PostSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
+
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider
         ]);
+    }
+
+    public function actionCategory($catId)
+    {
+        if(isset($catId)) {
+            $searchModel = new PostSearch();
+            $searchModel->category = $catId;
+            $dataProvider = $searchModel->search(['category' => $catId]);
+
+            return $this->render('index', [
+                'searchModel' => $searchModel,
+                'dataProvider' => $dataProvider
+            ]);
+        } else {
+            actionIndex();
+        }
+    }
+
+    /**
+     * Creates a new Post model.
+     * If creation is successful, the browser will be redirected to the 'view' page.
+     * @return mixed
+     */
+    public function actionCreate()
+    {
+        if (!\Yii::$app->user->can('updatePost')) {
+            return $this->redirect(['index']);
+        }
+        $model = new Post();
+        $uploadImageModel = new UploadImage();
+
+        if ($model->load(Yii::$app->request->post())) {
+
+            $uploadImageModel->image = UploadedFile::getInstance($model, 'image');
+            $model->image = "";
+            $model->author_id = Yii::$app->user->id;
+            if($model->save()) {
+
+               if($model->image = $uploadImageModel->upload($model->id)) {
+                   $model->save();
+               }
+                return $this->redirect(['view', 'id' => $model->id, 'image' => $uploadImageModel->image]);
+            }
+        }
+
+        return $this->render('create', [
+            'model' => $model,
+            'uploadImageModel' => $uploadImageModel
+        ]);
+    }
+
+    /**
+     * Updates an existing Post model.
+     * If update is successful, the browser will be redirected to the 'view' page.
+     * @param integer $id
+     * @return mixed
+     */
+    public function actionUpdate($id)
+    {
+        if (!(Yii::$app->user->can('updatePost') && Yii::$app->user->id ==  $this->findModel($id)->author_id)) {
+            return $this->redirect(['index']);
+        }
+        $model = $this->findModel($id);
+        $uploadImageModel = new UploadImage();
+
+        if ($model->load(Yii::$app->request->post())){
+            $uploadImageModel->image = UploadedFile::getInstance($model, 'image');
+
+            $model->image = $uploadImageModel->upload($model->id);
+
+            if($model->save()) {
+                return $this->redirect(['view', 'id' => $model->id]);
+            }
+        }
+        return $this->render('update', [
+            'model' => $model,
+        ]);
+    }
+
+    /**
+     * Deletes an existing Post model.
+     * If deletion is successful, the browser will be redirected to the 'index' page.
+     * @param integer $id
+     * @return mixed
+     */
+    public function actionDelete($id)
+    {
+        if (!(Yii::$app->user->can('updatePost') && Yii::$app->user->id == $this->findModel($id)->author_id)) {
+            return $this->redirect(['index']);
+        }
+
+        $this->findModel($id)->delete();
+
+        return $this->redirect(['index']);
     }
 
     /**
@@ -70,69 +171,6 @@ class PostController extends Controller
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
-    }
-
-    public function actionInstitutions($instId)
-    {
-        //всего городов в базе,относящейся к этой стране
-        $page = GeoInstitutions::findOne(['id' => $instId]);
-
-     $idModalWidget = Raits::TYPE_GEOINSTITUTIONS.$instId;//id для виджета модального окна в виде
-        //обработка звездного рейтинга
-        if (Yii::$app->request->isPost && Yii::$app->request->isAjax && Yii::$app->request->post('rait')){
-            $rait = Yii::$app->request->post('rait');//оценка пользователя
-            $res = [];
-            if(!Yii::$app->user->isGuest){
-                //есть ли запись о голосовании на материале у данного пользователя
-                $userRaits = Raits::find()
-                                ->userRaits()
-                                ->andWhere(['materialType' => Raits::TYPE_GEOINSTITUTIONS,'materialId' => $instId])
-                                ->count();
-
-                //если пользователь уже голосовал выводим сообщение и далее не выполняем
-                if($userRaits){
-                    $res['message'] = 'Этот голос не учитывается. Вы уже проголосовали ранее...';
-                    return json_encode($res, JSON_NUMERIC_CHECK);
-                }
-
-                //Если новый голос пользователя, записываем в бд
-                $newRait = new Raits();
-                $newRait->materialType = Raits::TYPE_GEOINSTITUTIONS;
-                $newRait->materialId = $instId;
-                $newRait->rateNum = $rait;
-                $newRait->save();
-
-                /**
-                 * Вычисляем общий рейтинг с учетом изменений
-                 */
-                //выбираем все голоса по данной записи
-                $allRaits = Raits::find()->where(['materialType' => Raits::TYPE_GEOINSTITUTIONS,'materialId' => $instId])
-                                         ->select('rateNum');
-
-                $allUsers = $allRaits->count();//сумма всех учетных записей пользователей к дан. материалу (1а запись - 1 пользователь)
-                $sumVotes = $allRaits->sum('rateNum');//сумма всех оценок пользователей к дан. материалу
-
-                $totalRating = round($sumVotes / $allUsers, 2);// округляем до сотых
-
-                //записываем вычесленный рейтинг в таблицу материала в поле rating
-                $inst = GeoInstitutions::findOne($instId);
-                    $inst->scenario = GeoInstitutions::RATING_UPDATE;
-                    $inst->rating = $totalRating;
-                    $inst->ratingVotes = $allUsers;
-                    $inst->save();
-
-                //возвращаем новый рейтинг в вид
-                $res['rating'] = $inst->rating;//передаем вычесленный рейтинг по материалу
-                $res['ratingVotes'] = $inst->ratingVotes;//передаем сумму всех голосов по материалу
-
-                return json_encode($res, JSON_NUMERIC_CHECK);
-            }
-
-        }
-
-        return $this->render('institutions',[
-                                                'page' => $page,
-        ]);
     }
 
 }

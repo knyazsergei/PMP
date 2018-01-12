@@ -22,6 +22,10 @@
         "kartik-v/yii2-widget-rating": "*",
         "rmrevin/yii2-comments": "~1.4",
         "kartik-v/yii2-widget-datetimepicker": "*",
+
+        "zendframework/zendsearch": "2.0.0rc6",
+        "zendframework/zend-stdlib": "2.3.1 as 2.0.0rc5",
+        "himiklab/yii2-search-component-v2": "*",
         "yiimodules/yii2-categories": "1.0.*"
 
     },
